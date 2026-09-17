@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+work/
+*.log
+*.pid
+*_known_hosts
+.env
+*.bin
+*.cvimodel
+*.onnx
+*.npz
+*.mp4
+*.h264

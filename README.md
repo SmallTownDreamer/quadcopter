@@ -1,25 +1,45 @@
-# quadcopter
+# Quadcopter：LicheeRV Nano 视觉与监控
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+本目录是准备合入 `https://gitee.com/Homeless-Yin/quadcopter.git` 的独立模块整理包，不是远端仓库的完整副本。上传时必须先拉取并保留远端历史及已有文件；不要直接强推此整理包。
+
+已实现：GC4653 摄像头硬件 H.264 编码、板卡轻量 TCP 发送、电脑 FFmpeg 无重编码封装、浏览器实时监控。深度估计尚未实现。
+
+- [运行与从零配置](licheerv-nano/docs/运行指南.md)
+- [实现与验证记录](licheerv-nano/docs/实现与验证.md)
+- [单目深度估计开发计划](licheerv-nano/docs/深度估计计划.md)
+- [项目协作约定](AGENTS.md)
+- [任务状态](TODO.md)
+
+## 快速启动
+
+板卡干净上电后，通过 SSH 登录，确认没有摄像头程序运行，再执行：
+
+```sh
+export LD_LIBRARY_PATH=/mnt/system/usr/lib:/mnt/system/lib
+nohup python3 /mnt/data/codex-h264-sender/h264_sender.py > /tmp/h264-sender.log 2>&1 < /dev/null &
+```
+
+电脑安装 Python 3 和 FFmpeg 后，在本整理包根目录运行：
+
+```sh
+python3 licheerv-nano/scripts/start_pc_preview.py --board 10.225.161.1 --ffmpeg /usr/bin/ffmpeg
+```
+
+Windows 将 `python3` 替换为 `python`，并通过 `--ffmpeg` 指定实际 EXE 路径。浏览器打开 <http://127.0.0.1:8080/>。本版本没有配置开机自启。
+
+离线测试（不访问板卡，不启动编码器）：
+
+```sh
+python3 -m unittest discover -s licheerv-nano/tests -v
+```
 
 #### 软件架构
-软件架构说明
 
-
-#### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
+```text
+板卡：GC4653 → VI / ISP → 硬件 VENC → H.264 FIFO → 轻量 TCP 发送器 :9000
+                                                        ↓ USB 网络 / Wi‑Fi
+电脑：FFmpeg 复制码流、添加时间戳、封装分片 MP4 → Python 本地 HTTP :8080 → 浏览器
+```
 
 #### 参与贡献
 
@@ -27,7 +47,6 @@ Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN�
 2.  新建 Feat_xxx 分支
 3.  提交代码
 4.  新建 Pull Request
-
 
 #### 特技
 
